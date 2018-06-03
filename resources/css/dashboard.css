@@ -1,0 +1,144 @@
+
+/* --------------------------------------------------------------------------------------------------------- */
+/* ------------------------------------- BASIC SETUP ------------------------------------------------*/
+/* --------------------------------------------------------------------------------------------------------- */
+
+*,
+*:before,
+*:after {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 20px;
+}
+
+body {
+    font-family: 'Lato', 'Arial', sans-serif;
+    height: 100vh;
+}
+
+/* --------------------------------------------------------------------------------------------------------- */
+/* ------------------------------------- NAVIGATION --------------------------------------------------------*/
+/* --------------------------------------------------------------------------------------------------------- */
+
+
+nav {
+    height: 50px;
+    width: 100%;
+    background-color: rgb(60, 31, 71);
+    color: rgb(239, 240, 239);
+    border-bottom: 3px solid rgb(239, 240, 239);
+}
+
+.nav-menu {
+    height: 100%;
+    float: right;
+    list-style: none;
+    margin-right: 20px;
+    padding-top: 0px;
+    font-weight: 300;
+}
+
+.nav-menu li {
+    vertical-align: middle;
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.icon-power {
+    font-size: 200%;
+    height: 40px;
+    width: 40px;
+    color: #b788cb;
+    transition: color 0.2s;
+}
+
+.icon-power a:link,
+.icon-power a:visited {
+    color: #b788cb;
+}
+
+.icon-power:hover,
+.icon-power:active {
+    color: red;
+}
+
+/* --------------------------------------------------------------------------------------------------------- */
+/* ------------------------------------- DASHBOARD SECTION --------------------------------------------------------*/
+/* --------------------------------------------------------------------------------------------------------- */
+
+
+.dashboard-section {
+    height: 100%;
+}
+
+/* ----- MENU --------*/
+
+.logo {
+    height: auto;
+    width: 60%;
+    margin-left: 20%;
+    margin-top: 5px;
+}
+
+.logo-container {
+    border-bottom: 3px solid rgb(239, 240, 239);
+}
+
+
+.dashboard-menu {
+    background-color: rgba(60, 31, 71, 0.7);
+    height: 100%;
+    min-height: 100%;
+    margin: 0 0;
+    border-right: 3px solid rgb(60, 31, 71);
+}
+
+.dashboard-menu::after {
+    content: " ";
+    background: url(img/menu.jpg);
+    opacity: 0.6;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    width: 18.72%;
+    background-size: cover;
+    background-position: center;
+    z-index: -1;   
+}
+
+.dashboard-menu-list{
+    list-style: none;
+    text-align: center;
+    margin-top: 10%;
+}
+
+.dashboard-menu-list a{
+    text-decoration: none;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.dashboard-menu-list li{
+    height: 40px;
+    padding-top: 7px;
+    margin-top: 35px;
+    background-color: rgba(60, 31, 71, 0.3);
+    transition: background-color 0.3s;
+}
+
+.dashboard-menu-list li:hover{
+    background-color: rgb(60, 31, 71);
+}
+
+/* ----- CONTENT --------*/
+
+.dashboard-content {
+    margin: 0 0;
+}
+
