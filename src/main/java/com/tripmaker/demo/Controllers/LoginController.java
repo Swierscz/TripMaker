@@ -15,7 +15,7 @@ import javax.validation.Valid;
 
 @RestController
 public class LoginController {
-
+//kutasy z naszej klasy
     @Autowired
     private UserService userService;
 
