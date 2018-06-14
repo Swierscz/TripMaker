@@ -5,13 +5,14 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 import java.util.Set;
 
 //Nie należy używać LOMBOKA!!!
 
 @Entity
 @Table(name = "user")
-public class User{
+public class User implements Serializable{
 
     @Id
     @GeneratedValue
@@ -35,9 +36,16 @@ public class User{
 
     private boolean active;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Locale locale;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+//cos sie tu wali
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_trip_group", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "trip_group_id"))
+    private Set<TripGroup> tripGroups;
 
 
     public Long getId() {
@@ -95,5 +103,21 @@ public class User{
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Set<TripGroup> getTripGroups() {
+        return tripGroups;
+    }
+
+    public void setTripGroups(Set<TripGroup> tripGroups) {
+        this.tripGroups = tripGroups;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 }

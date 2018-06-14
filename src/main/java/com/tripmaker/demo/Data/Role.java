@@ -1,18 +1,21 @@
 package com.tripmaker.demo.Data;
 
 
+import org.omg.PortableServer.ServantActivator;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "role")
-public class Role {
+public class Role implements Serializable{
     @Id
     @GeneratedValue
     @Column(name = "role_id")
     private Long id;
 
-    @NotEmpty(message = "Please provide an role")
+    @NotEmpty(message = "Please provide a role")
     private String role;
 
 
