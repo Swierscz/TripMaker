@@ -24,8 +24,15 @@ public class TripGroup implements Serializable {
 
     private Long dateTo;
 
+    //TODO napewno?
+    @ManyToOne
+    private User owner;
+
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Place> places;
+
+    @ManyToMany(mappedBy = "tripGroups")
+    private Set<User> users;
 
     public Long getId() {
         return id;
@@ -75,9 +82,30 @@ public class TripGroup implements Serializable {
         this.places = places;
     }
 
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
     public void addPlaces(Place place){
         if(places == null) places = new HashSet<Place>();
         places.add(place);
+    }
+
+    public void addUser(User user){
+        if(users == null) users = new HashSet<User>();
+        users.add(user);
     }
 
     public String toString(){
