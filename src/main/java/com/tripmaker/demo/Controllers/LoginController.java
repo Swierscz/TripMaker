@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class LoginController {
 //kutasy z naszej klasy
     @Autowired

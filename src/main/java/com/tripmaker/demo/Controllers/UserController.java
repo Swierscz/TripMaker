@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.HashSet;
 import java.util.Set;
 
-@CrossOrigin
+@CrossOrigin(origins = "*")
 @RequestMapping("api/user")
 public class UserController {
 
