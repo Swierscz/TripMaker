@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 
 @Service
 public class TripGroupServiceImpl implements TripGroupService {
@@ -28,6 +29,11 @@ public class TripGroupServiceImpl implements TripGroupService {
     @Override
     public TripGroup findByName(String name) {
         return tripGroupRepository.findByName(name);
+    }
+
+    @Override
+    public List<TripGroup> findAllGroups() {
+        return tripGroupRepository.findAll();
     }
 
 }

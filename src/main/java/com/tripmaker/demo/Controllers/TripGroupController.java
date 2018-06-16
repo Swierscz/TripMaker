@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@CrossOrigin
 @RestController
 @RequestMapping("api/tripGroup")
 public class TripGroupController {
@@ -69,5 +72,12 @@ public class TripGroupController {
             if(user == null) return new ResponseEntity<User>((User) null, HttpStatus.NOT_FOUND);
             else return new ResponseEntity<User>(user, HttpStatus.FOUND);
         }
+    }
+
+    @GetMapping("getAll")
+    public ResponseEntity<List<TripGroup>> getAllGroups(){
+        List<TripGroup> groupList = tripGroupService.findAllGroups();
+        if(groupList==null) return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.NOT_FOUND);
+        else return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.FOUND);
     }
 }

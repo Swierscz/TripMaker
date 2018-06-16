@@ -86,10 +86,6 @@ public class TripGroup implements Serializable {
         return owner;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
     public Set<User> getUsers() {
         return users;
     }
