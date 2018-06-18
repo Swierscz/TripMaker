@@ -12,11 +12,13 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
 
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class LoginController {
 //kutasy z naszej klasy
     @Autowired
     private UserService userService;
+
+
 
     @RequestMapping(value="/registration", method = RequestMethod.GET)
     public ModelAndView registration(){
