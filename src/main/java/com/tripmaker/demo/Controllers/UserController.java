@@ -1,5 +1,7 @@
 package com.tripmaker.demo.Controllers;
 
+import com.tripmaker.demo.Data.AuthenticationFacade;
+import com.tripmaker.demo.Data.IAuthenticationFacade;
 import com.tripmaker.demo.Data.TripGroup;
 import com.tripmaker.demo.Data.User;
 import com.tripmaker.demo.Services.UserService;
@@ -14,6 +16,9 @@ import java.util.Set;
 @RestController
 @RequestMapping("api/user")
 public class UserController {
+
+    @Autowired
+    IAuthenticationFacade authenticationFacade;
 
     @Autowired
     UserService userService;
@@ -33,6 +38,9 @@ public class UserController {
         else return new ResponseEntity<Set<TripGroup>>(user.getTripGroups(), HttpStatus.OK);
     }
 
-
-
+    @GetMapping("currentUser")
+    public ResponseEntity<User> getCurrentUser(){
+        String mail = authenticationFacade.getAuthentication().getName();
+        return new ResponseEntity<User>(userService.findUserByEmail(mail), HttpStatus.OK);
+    }
 }
