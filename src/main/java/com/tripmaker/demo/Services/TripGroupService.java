@@ -7,7 +7,7 @@ import java.util.List;
 
 
 public interface TripGroupService {
-    void createGroup(TripGroup tripGroup);
+    void saveGroup(TripGroup tripGroup);
     void deleteGroup(String name);
     TripGroup findByName(String name);
     List<TripGroup> findAllGroups();

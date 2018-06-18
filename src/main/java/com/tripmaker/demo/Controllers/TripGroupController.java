@@ -24,17 +24,18 @@ public class TripGroupController {
 
     @PostMapping("createTripGroup")
     public ResponseEntity<TripGroup> createTripGroup(@RequestBody TripGroup tripGroup){
-        tripGroupService.createGroup(tripGroup);
+        tripGroupService.saveGroup(tripGroup);
         return new ResponseEntity<TripGroup>(tripGroup, HttpStatus.CREATED);
     }
 
 
-    //TODO zastanowić się nad możliwością konfiktów przy dodawaniu nowego miejsca
+    //TODO sprawdzić czy warunek w if-ie działa poprawnie
     @PostMapping("{name}/addPlace")
     public ResponseEntity<TripGroup> addPlaceToGroup(@PathVariable("name") String name, @RequestBody Place place){
         TripGroup tripGroup= tripGroupService.findByName(name);
-        tripGroup.addPlaces(place);
-        tripGroupService.createGroup(tripGroup);
+        if(!tripGroup.getPlaces().contains(tripGroup))
+            tripGroup.addPlaces(place);
+        tripGroupService.saveGroup(tripGroup);
         return new ResponseEntity<TripGroup>(tripGroup, HttpStatus.ACCEPTED);
     }
 

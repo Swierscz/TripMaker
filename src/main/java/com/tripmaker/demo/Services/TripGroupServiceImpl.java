@@ -17,7 +17,7 @@ public class TripGroupServiceImpl implements TripGroupService {
 
 
     @Override
-    public void createGroup(TripGroup tripGroup) {
+    public void saveGroup(TripGroup tripGroup) {
         tripGroupRepository.save(tripGroup);
     }
 
