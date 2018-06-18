@@ -55,7 +55,7 @@ public class TripGroupController {
     public ResponseEntity<TripGroup> addUserToTripGroup(@PathVariable("name") String name, @PathVariable("mail") String mail ){
         TripGroup tripGroup = tripGroupService.findByName(name);
         User user = userService.findUserByEmail(mail);
-        if(tripGroup == null || user == null) return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.NOT_FOUND);
+        if(tripGroup == null || user == null) return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.I_AM_A_TEAPOT);
         else{
             if(tripGroup.getUsers().contains(user)) return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.CONFLICT);
             else{
@@ -68,10 +68,10 @@ public class TripGroupController {
     @GetMapping("{name}/owner")
     public ResponseEntity<User> getOwner(@PathVariable("name") String name){
         TripGroup tripGroup = tripGroupService.findByName(name);
-        if(tripGroup == null) return new ResponseEntity<User>((User) null, HttpStatus.NOT_FOUND);
+        if(tripGroup == null) return new ResponseEntity<User>((User) null, HttpStatus.I_AM_A_TEAPOT);
         else{
             User user = tripGroup.getOwner();
-            if(user == null) return new ResponseEntity<User>((User) null, HttpStatus.NOT_FOUND);
+            if(user == null) return new ResponseEntity<User>((User) null, HttpStatus.I_AM_A_TEAPOT);
             else return new ResponseEntity<User>(user, HttpStatus.OK);
         }
     }
@@ -79,7 +79,7 @@ public class TripGroupController {
     @GetMapping("getAll")
     public ResponseEntity<List<TripGroup>> getAllGroups(){
         List<TripGroup> groupList = tripGroupService.findAllGroups();
-        if(groupList==null) return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.NOT_FOUND);
+        if(groupList==null) return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.I_AM_A_TEAPOT);
         else return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.OK);
     }
 }

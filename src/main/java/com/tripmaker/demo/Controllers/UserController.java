@@ -25,14 +25,14 @@ public class UserController {
     @GetMapping("{mail}")
     public ResponseEntity<User> findUserByEmail(@PathVariable("mail") String mail){
         User user = userService.findUserByEmail(mail);
-        if(user == null) return new ResponseEntity<User>(new User(), HttpStatus.NOT_FOUND);
+        if(user == null) return new ResponseEntity<User>(new User(), HttpStatus.I_AM_A_TEAPOT);
         else return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 
     @GetMapping("getTripGroup/{mail}")
     public ResponseEntity<Set<TripGroup>> getTripGroupsByEmail(@PathVariable("mail") String mail){
         User user = userService.findUserByEmail(mail);
-        if(user == null) return new ResponseEntity<Set<TripGroup>>(new HashSet<>(), HttpStatus.NOT_FOUND);
+        if(user == null) return new ResponseEntity<Set<TripGroup>>(new HashSet<>(), HttpStatus.I_AM_A_TEAPOT);
         else return new ResponseEntity<Set<TripGroup>>(user.getTripGroups(), HttpStatus.OK);
     }
 
