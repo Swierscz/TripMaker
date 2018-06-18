@@ -30,7 +30,7 @@ public class PlaceController {
 
     @GetMapping("findPlace")
     public ResponseEntity<Place> findPlace(@RequestHeader(value = "name") String name){
-       return new ResponseEntity<Place>(placeService.findPlaceByName(name), HttpStatus.FOUND);
+       return new ResponseEntity<Place>(placeService.findPlaceByName(name), HttpStatus.OK);
     }
 
 }

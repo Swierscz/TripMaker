@@ -15,6 +15,8 @@ import java.util.List;
 @RequestMapping("api/tripGroup")
 public class TripGroupController {
 
+    //TODO Rozpoznawać unikalnie grupy
+
     @Autowired
     TripGroupService tripGroupService;
 
@@ -45,7 +47,7 @@ public class TripGroupController {
 
     @GetMapping("findTripGroup/{name}")
     public ResponseEntity<TripGroup> findTripGroup(@PathVariable("name") String name){
-        return new ResponseEntity<TripGroup>(tripGroupService.findByName(name), HttpStatus.FOUND);
+        return new ResponseEntity<TripGroup>(tripGroupService.findByName(name), HttpStatus.OK);
     }
 
     //MOŻE W TEN SPOSÓB?
@@ -70,7 +72,7 @@ public class TripGroupController {
         else{
             User user = tripGroup.getOwner();
             if(user == null) return new ResponseEntity<User>((User) null, HttpStatus.NOT_FOUND);
-            else return new ResponseEntity<User>(user, HttpStatus.FOUND);
+            else return new ResponseEntity<User>(user, HttpStatus.OK);
         }
     }
 
@@ -78,6 +80,6 @@ public class TripGroupController {
     public ResponseEntity<List<TripGroup>> getAllGroups(){
         List<TripGroup> groupList = tripGroupService.findAllGroups();
         if(groupList==null) return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.NOT_FOUND);
-        else return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.FOUND);
+        else return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.OK);
     }
 }
