@@ -38,8 +38,8 @@ public class UserController {
         else return new ResponseEntity<Set<TripGroup>>(user.getTripGroups(), HttpStatus.OK);
     }
 
-    @GetMapping("currentUser")
-    public ResponseEntity<User> getCurrentUser(){
+    @GetMapping("currentUserName")
+    public ResponseEntity<User> getCurrentUserName(){
         String mail = authenticationFacade.getAuthentication().getName();
         return new ResponseEntity<User>(userService.findUserByEmail(mail), HttpStatus.OK);
     }

@@ -61,11 +61,6 @@ public class LoginController {
         return modelAndView;
     }
 
-    @GetMapping(value = "/csrf")
-    public ResponseEntity<String> getToken(HttpServletRequest request){
-        CsrfToken token = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
-        return new ResponseEntity<String>(token.getToken(), HttpStatus.OK);
-    }
 
 
 }
