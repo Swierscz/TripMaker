@@ -1,6 +1,5 @@
 package com.tripmaker.demo.Controllers;
 
-import com.tripmaker.demo.Data.AuthenticationFacade;
 import com.tripmaker.demo.Data.IAuthenticationFacade;
 import com.tripmaker.demo.Data.TripGroup;
 import com.tripmaker.demo.Data.User;

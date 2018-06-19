@@ -34,14 +34,12 @@ public class User implements Serializable{
     @NotEmpty(message = "Please provide your last name")
     private String last_name;
 
-    private boolean active;
-
     @ManyToOne(cascade = CascadeType.ALL)
     private Locale locale;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    @NotEmpty(message = "Please provide role")
+    private String role;
+
 //cos sie tu wali
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_trip_group", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "trip_group_id"))
@@ -89,22 +87,6 @@ public class User implements Serializable{
         this.last_name = last_name;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     public Set<TripGroup> getTripGroups() {
         return tripGroups;
     }
@@ -119,5 +101,13 @@ public class User implements Serializable{
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
