@@ -3,12 +3,16 @@ package com.tripmaker.demo.Controllers;
 import com.tripmaker.demo.Data.User;
 import com.tripmaker.demo.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -55,6 +59,12 @@ public class LoginController {
         modelAndView.addObject("adminMessage","Content Available Only for Users with Admin Role");
         modelAndView.setViewName("home");
         return modelAndView;
+    }
+
+    @GetMapping(value = "/csrf")
+    public ResponseEntity<String> getToken(HttpServletRequest request){
+        CsrfToken token = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+        return new ResponseEntity<String>(token.getToken(), HttpStatus.OK);
     }
 
 
