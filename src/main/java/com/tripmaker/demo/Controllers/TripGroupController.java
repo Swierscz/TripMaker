@@ -33,15 +33,15 @@ public class TripGroupController {
     @PostMapping("{name}/addPlace")
     public ResponseEntity<TripGroup> addPlaceToGroup(@PathVariable("name") String name, @RequestBody Place place){
         TripGroup tripGroup= tripGroupService.findByName(name);
-        if(!tripGroup.getPlaces().contains(tripGroup))
+        if(!tripGroup.getPlaces().contains(place))
             tripGroup.addPlaces(place);
         tripGroupService.saveGroup(tripGroup);
-        return new ResponseEntity<TripGroup>(tripGroup, HttpStatus.ACCEPTED);
+        return new ResponseEntity<TripGroup>(tripGroup, HttpStatus.OK);
     }
 
-    @GetMapping("deleteTripGroup/{name}")
-    public ResponseEntity deleteTripGroup(@PathVariable("name") String name){
-        tripGroupService.deleteGroup(name);
+    @GetMapping("deleteTripGroup/{id}")
+    public ResponseEntity deleteTripGroup(@PathVariable("id") Long id){
+        tripGroupService.deleteGroup(id);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -60,7 +60,7 @@ public class TripGroupController {
             if(tripGroup.getUsers().contains(user)) return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.CONFLICT);
             else{
                 tripGroup.addUser(user);
-                return new ResponseEntity<TripGroup>(tripGroup, HttpStatus.ACCEPTED);
+                return new ResponseEntity<TripGroup>(tripGroup, HttpStatus.OK);
             }
         }
     }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface TripGroupService {
     void saveGroup(TripGroup tripGroup);
-    void deleteGroup(String name);
+    void deleteGroup(Long id);
     TripGroup findByName(String name);
     List<TripGroup> findAllGroups();
 }
