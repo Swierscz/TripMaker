@@ -26,7 +26,7 @@ public class TripGroup implements Serializable {
     private Long dateTo;
 
     @NotNull
-    private String owner;
+    private String ownerMail;
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Place> places;
@@ -100,12 +100,12 @@ public class TripGroup implements Serializable {
         users.add(user);
     }
 
-    public String getOwner() {
-        return owner;
+    public String getOwnerMail() {
+        return ownerMail;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setOwnerMail(String ownerMail) {
+        this.ownerMail = ownerMail;
     }
 
     public String toString(){

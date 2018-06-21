@@ -32,6 +32,11 @@ public class TripGroupServiceImpl implements TripGroupService {
     }
 
     @Override
+    public TripGroup findById(Long id) {
+        return tripGroupRepository.findById(id).get();
+    }
+
+    @Override
     public List<TripGroup> findAllGroups() {
         return tripGroupRepository.findAll();
     }

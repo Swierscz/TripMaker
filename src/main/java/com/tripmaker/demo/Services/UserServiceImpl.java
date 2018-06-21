@@ -1,6 +1,8 @@
 package com.tripmaker.demo.Services;
 
 import com.tripmaker.demo.Config.AuthenticationFacade;
+import com.tripmaker.demo.Data.Role;
+import com.tripmaker.demo.Data.TripGroup;
 import com.tripmaker.demo.Data.User;
 import com.tripmaker.demo.Data.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,4 +65,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private UserDetails buildUserForAuthentication(User user) {
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), getAuthority(user.getRole()));
     }
+
 }

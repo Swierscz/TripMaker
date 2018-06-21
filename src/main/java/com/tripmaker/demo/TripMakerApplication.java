@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 @SpringBootApplication
 public class TripMakerApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(TripMakerApplication.class, args);
 	}
