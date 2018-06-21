@@ -2,6 +2,7 @@ package com.tripmaker.demo.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,9 +25,8 @@ public class TripGroup implements Serializable {
 
     private Long dateTo;
 
-    //TODO napewno?
-    @ManyToOne
-    private User owner;
+    @NotNull
+    private String owner;
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Place> places;
@@ -82,10 +82,6 @@ public class TripGroup implements Serializable {
         this.places = places;
     }
 
-    public User getOwner() {
-        return owner;
-    }
-
     public Set<User> getUsers() {
         return users;
     }
@@ -102,6 +98,14 @@ public class TripGroup implements Serializable {
     public void addUser(User user){
         if(users == null) users = new HashSet<User>();
         users.add(user);
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public String toString(){

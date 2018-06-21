@@ -1,6 +1,6 @@
 package com.tripmaker.demo.Controllers;
 
-import com.tripmaker.demo.Data.IAuthenticationFacade;
+import com.tripmaker.demo.Config.AuthenticationFacade;
 import com.tripmaker.demo.Data.TripGroup;
 import com.tripmaker.demo.Data.User;
 import com.tripmaker.demo.Services.UserService;
@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @RestController
@@ -17,29 +16,34 @@ import java.util.Set;
 public class UserController {
 
     @Autowired
-    IAuthenticationFacade authenticationFacade;
+    AuthenticationFacade authenticationFacade;
 
     @Autowired
     UserService userService;
 
-    //TODO zapytać się o poprawność zwracania kodu odpowiedzi w takim przypadku
-    @GetMapping("{mail}")
+    @GetMapping("getUserByMail/{mail}")
     public ResponseEntity<User> findUserByEmail(@PathVariable("mail") String mail){
         User user = userService.findUserByEmail(mail);
-        if(user == null) return new ResponseEntity<User>(new User(), HttpStatus.I_AM_A_TEAPOT);
+        if(user == null) return new ResponseEntity<User>((User) null, HttpStatus.NOT_FOUND);
+        else return new ResponseEntity<User>(user, HttpStatus.OK);
+    }
+
+    @GetMapping("getUserByUsername/{username}")
+    public ResponseEntity<User> findUserByUserName(@PathVariable("username") String username){
+        User user = userService.findUserByUserName(username);
+        if(user == null) return new ResponseEntity<User>((User) null, HttpStatus.NOT_FOUND);
         else return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 
     @GetMapping("getTripGroup/{mail}")
     public ResponseEntity<Set<TripGroup>> getTripGroupsByEmail(@PathVariable("mail") String mail){
         User user = userService.findUserByEmail(mail);
-        if(user == null) return new ResponseEntity<Set<TripGroup>>(new HashSet<>(), HttpStatus.I_AM_A_TEAPOT);
+        if(user == null) return new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND);
         else return new ResponseEntity<Set<TripGroup>>(user.getTripGroups(), HttpStatus.OK);
     }
 
-    @GetMapping("currentUserName")
+    @GetMapping("getCurrentUserName")
     public ResponseEntity<User> getCurrentUserName(){
-        String mail = authenticationFacade.getAuthentication().getName();
-        return new ResponseEntity<User>(userService.findUserByEmail(mail), HttpStatus.OK);
+        return new ResponseEntity<User>(userService.getCurrentUser(), HttpStatus.OK);
     }
 }

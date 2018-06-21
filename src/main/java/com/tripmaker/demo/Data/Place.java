@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "place")
-public class Place implements Serializable{
+public class Place implements Serializable {
 
     @Id
     @GeneratedValue
@@ -20,9 +20,7 @@ public class Place implements Serializable{
 
     private double latitude;
 
-
     private String description;
-
 
     public Long getId() {
         return id;

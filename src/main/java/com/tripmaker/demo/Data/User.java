@@ -8,8 +8,6 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Set;
 
-//Nie należy używać LOMBOKA!!!
-
 @Entity
 @Table(name = "user")
 public class User implements Serializable{
@@ -20,7 +18,7 @@ public class User implements Serializable{
     private Long id;
 
     @Email(message = "Please provide a valid email")
-    @NotEmpty(message = "Please provice an email")
+    @NotEmpty(message = "Please provide an email")
     private String email;
 
     @Length(min = 5, message = "Your password must have at least 5 characters")
@@ -28,11 +26,14 @@ public class User implements Serializable{
     @Column(name = "password")
     private String password;
 
-    @NotEmpty(message = "Please provide your name")
+    @NotEmpty(message = "Please provide your username")
+    @Column(name = "user_name", unique = true)
+    private String userName;
+
     private String name;
 
-    @NotEmpty(message = "Please provide your last name")
-    private String last_name;
+    @Column(name = "last_name")
+    private String lastName;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Locale locale;
@@ -40,11 +41,9 @@ public class User implements Serializable{
     @NotEmpty(message = "Please provide role")
     private String role;
 
-//cos sie tu wali
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_trip_group", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "trip_group_id"))
     private Set<TripGroup> tripGroups;
-
 
     public Long getId() {
         return id;
@@ -79,12 +78,12 @@ public class User implements Serializable{
         this.name = name;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public Set<TripGroup> getTripGroups() {
@@ -109,5 +108,13 @@ public class User implements Serializable{
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

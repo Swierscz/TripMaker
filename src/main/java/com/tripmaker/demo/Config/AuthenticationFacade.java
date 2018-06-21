@@ -1,7 +1,7 @@
-package com.tripmaker.demo.Data;
+package com.tripmaker.demo.Config;
 
 import org.springframework.security.core.Authentication;
 
-public interface IAuthenticationFacade {
+public interface AuthenticationFacade {
     Authentication getAuthentication();
 }
