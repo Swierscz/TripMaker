@@ -45,10 +45,9 @@ public class User implements Serializable{
     @NotEmpty(message = "Please provide role")
     private String role;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "users")
     @JsonIgnore
     @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@user_generator_id")
-    @JoinTable(name = "user_trip_group", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "trip_group_id"))
     private Set<TripGroup> tripGroups;
 
     public Long getId() {

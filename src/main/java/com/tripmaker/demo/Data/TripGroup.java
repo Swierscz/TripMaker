@@ -40,8 +40,9 @@ public class TripGroup implements Serializable {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Place> places;
 
-    @ManyToMany(mappedBy = "tripGroups")
+    @ManyToMany
     @JsonIgnore
+    @JoinTable(name = "trip_group_user", joinColumns = @JoinColumn(name = "trip_group_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@trip_generator_id")
     private Set<User> users;
 

@@ -23,6 +23,7 @@ public class TripGroupServiceImpl implements TripGroupService {
 
     @Override
     public void deleteGroup(Long id) {
+//        tripGroupRepository.findById(id).get
         tripGroupRepository.deleteById(id);
     }
 
