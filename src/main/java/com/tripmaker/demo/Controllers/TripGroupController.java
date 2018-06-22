@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api")
@@ -110,14 +111,15 @@ public class TripGroupController {
         return response;
     }
 
+    //TODO Zaimplementować funkcje w oparciu o wyrażenia regularne
     @GetMapping("r_user/tripGroup/findGroupsByName/{name}")
-    public ResponseEntity<TripGroup> findTripGroupsByName(@PathVariable("name") String name) {
-
-        //TODO Zaimplementować funkcje w oparciu o wyrażenia regularne
-
-        return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<Set<TripGroup>> findTripGroupsByName(@PathVariable("name") String name) {
+        Set<TripGroup> listOfFoundGroups = tripGroupService.findGroupsByName(name);
+        return listOfFoundGroups == null
+                ? new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND)
+                : new ResponseEntity<Set<TripGroup>>( listOfFoundGroups, HttpStatus.OK);
     }
-//
+
 
     @GetMapping("r_user/tripGroup/findNearestGroupsByName/{name}")
     public ResponseEntity<TripGroup> findNearestGroupsByName(@PathVariable("name") String name) {
@@ -150,21 +152,21 @@ public class TripGroupController {
      * */
 
 
-    @GetMapping("r_user/tripGroup/{name}/owner")
-    public ResponseEntity<String> getOwnerName(@PathVariable("name") String name) {
-        TripGroup tripGroup = tripGroupService.findByName(name);
-        if (tripGroup == null) return new ResponseEntity<String>("Cannot find tripGroup ", HttpStatus.NOT_FOUND);
-        else {
-            return new ResponseEntity<String>(tripGroup.getName(), HttpStatus.OK);
-        }
-    }
-
-    @GetMapping("r_user/tripGroup/getAll")
-    public ResponseEntity<List<TripGroup>> getAllGroups() {
-        List<TripGroup> groupList = tripGroupService.findAllGroups();
-        if (groupList == null) return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.NOT_FOUND);
-        else return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.OK);
-    }
+//    @GetMapping("r_user/tripGroup/{name}/owner")
+//    public ResponseEntity<String> getOwnerName(@PathVariable("name") String name) {
+//        TripGroup tripGroup = tripGroupService.findByName(name);
+//        if (tripGroup == null) return new ResponseEntity<String>("Cannot find tripGroup ", HttpStatus.NOT_FOUND);
+//        else {
+//            return new ResponseEntity<String>(tripGroup.getName(), HttpStatus.OK);
+//        }
+//    }
+//
+//    @GetMapping("r_user/tripGroup/getAll")
+//    public ResponseEntity<List<TripGroup>> getAllGroups() {
+//        List<TripGroup> groupList = tripGroupService.findAllGroups();
+//        if (groupList == null) return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.NOT_FOUND);
+//        else return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.OK);
+//    }
 
 
 
