@@ -1,5 +1,9 @@
 package com.tripmaker.demo.Data;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -42,6 +46,8 @@ public class User implements Serializable{
     private String role;
 
     @ManyToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@user_generator_id")
     @JoinTable(name = "user_trip_group", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "trip_group_id"))
     private Set<TripGroup> tripGroups;
 

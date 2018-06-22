@@ -3,11 +3,14 @@ package com.tripmaker.demo.Controllers;
 import com.tripmaker.demo.Data.*;
 import com.tripmaker.demo.Services.TripGroupService;
 import com.tripmaker.demo.Services.UserService;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -22,27 +25,31 @@ public class TripGroupController {
 
     @PostMapping("r_user/tripGroup/createTripGroup")
     public ResponseEntity<TripGroup> createTripGroup(@RequestBody TripGroup tripGroup) {
-        tripGroup.setOwnerMail(userService.getCurrentUser().getEmail());
+        User currentUser = userService.getCurrentUser();
+        tripGroup.setOwner(currentUser);
         tripGroupService.saveGroup(tripGroup);
+        currentUser.getTripGroups().add(tripGroup);
+        userService.saveUser(currentUser);
         return new ResponseEntity<TripGroup>(tripGroup, HttpStatus.CREATED);
     }
 
-    @PostMapping("r_user/tripGroup/{name}/addPlace")
-    public ResponseEntity<TripGroup> addPlaceToGroupAsUser(@PathVariable("name") String name, @RequestBody Place place){
-        return addPlaceToGroup(name, place, Role.USER);
+    @PostMapping("r_user/tripGroup/{id}/addPlace")
+    public ResponseEntity<TripGroup> addPlaceToGroupAsUser(@PathVariable("id") Long id, @RequestBody Place place) {
+        return addPlaceToGroup(id, place, Role.USER);
     }
 
-    @PostMapping("r_admin/tripGroup/{name}/addPlace")
-    public ResponseEntity<TripGroup> addPlaceToGroupAsAdmin(@PathVariable("name") String name, @RequestBody Place place){
-        return addPlaceToGroup(name, place, Role.ADMIN);
+    @PostMapping("r_admin/tripGroup/{id}/addPlace")
+    public ResponseEntity<TripGroup> addPlaceToGroupAsAdmin(@PathVariable("id") Long id, @RequestBody Place place) {
+        return addPlaceToGroup(id, place, Role.ADMIN);
     }
 
-    public ResponseEntity<TripGroup> addPlaceToGroup(String name, Place place, String role){
-        TripGroup tripGroup = tripGroupService.findByName(name);
-        if(tripGroup == null) return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.NOT_FOUND);
+    public ResponseEntity<TripGroup> addPlaceToGroup(Long id, Place place, String role) {
+        TripGroup tripGroup = tripGroupService.findById(id);
+        if (tripGroup == null) return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.NOT_FOUND);
 
-        if(!role.equals(Role.ADMIN)){
-            if(!isCurrentUserMember(tripGroup)) return new ResponseEntity<TripGroup>( (TripGroup) null, HttpStatus.UNAUTHORIZED);
+        if (!role.equals(Role.ADMIN)) {
+            if (!isCurrentUserMember(tripGroup))
+                return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.UNAUTHORIZED);
         }
 
         return checkIsPlaceAlreadyCreatedIfNotCreate(place, tripGroup);
@@ -59,30 +66,41 @@ public class TripGroupController {
     }
 
     @GetMapping("r_user/tripGroup/deleteTripGroup/{id}")
-    public ResponseEntity deleteTripGroupAsUser(@PathVariable("id") Long id){
+    public ResponseEntity deleteTripGroupAsUser(@PathVariable("id") Long id) {
         return deleteTripGroup(id, Role.USER);
     }
 
     @GetMapping("r_admin/tripGroup/deleteTripGroup/{id}")
-    public ResponseEntity deleteTripGroupAsAdmin(@PathVariable("id") Long id){
+    public ResponseEntity deleteTripGroupAsAdmin(@PathVariable("id") Long id) {
         return deleteTripGroup(id, Role.ADMIN);
     }
 
-    public ResponseEntity deleteTripGroup(Long id, String role){
+    public ResponseEntity deleteTripGroup(Long id, String role) {
         TripGroup tripGroup = tripGroupService.findById(id);
-        if(tripGroup == null) return new ResponseEntity(HttpStatus.NOT_FOUND);
+        if (tripGroup == null) return new ResponseEntity(HttpStatus.NOT_FOUND);
 
-        if(!role.equals(Role.ADMIN)){
-            if(!userService.getCurrentUser().getEmail().equals(tripGroup.getOwnerMail())) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        if (!role.equals(Role.ADMIN)) {
+            if (!(userService.getCurrentUser() == tripGroup.getOwner()))
+                return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
 
         tripGroupService.deleteGroup(tripGroup.getId());
         return new ResponseEntity(HttpStatus.OK);
     }
 
-
-
     @GetMapping("r_user/tripGroup/getTripGroupById/{id}")
+    public ResponseEntity<String> getTripGroup(@PathVariable("id") Long id) {
+
+        TripGroup tripGroup = tripGroupService.findById(id);
+        tripGroup.setOwner(tripGroup.getOwner());
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Content-Type", "application/json;charset=UTF-8");
+        return new ResponseEntity<String>(convertToJson(tripGroup), httpHeaders, HttpStatus.OK);
+
+    }
+
+    @GetMapping("r_user/tripGroup/getTripGroupById_woOwner/{id}")
     public ResponseEntity<TripGroup> findTripGroupById(@PathVariable("id") Long id) {
         TripGroup tripGroup = tripGroupService.findById(id);
         ResponseEntity<TripGroup> response =
@@ -93,7 +111,7 @@ public class TripGroupController {
     }
 
     @GetMapping("r_user/tripGroup/findGroupsByName/{name}")
-    public ResponseEntity<TripGroup> findTripGroups(@PathVariable("name") String name) {
+    public ResponseEntity<TripGroup> findTripGroupsByName(@PathVariable("name") String name) {
 
         //TODO Zaimplementować funkcje w oparciu o wyrażenia regularne
 
@@ -102,35 +120,35 @@ public class TripGroupController {
 //
 
     @GetMapping("r_user/tripGroup/findNearestGroupsByName/{name}")
-    public ResponseEntity<TripGroup> findNearestGroupsByName(@PathVariable("name") String name){
+    public ResponseEntity<TripGroup> findNearestGroupsByName(@PathVariable("name") String name) {
 
         //TODO Zaimplementowac
 
         return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @GetMapping("r_admin/tripGroup/{id}/addUser/{mail}")
+    public ResponseEntity<TripGroup> addUserToTripGroup(@PathVariable("id") Long id, @PathVariable("mail") String mail) {
+        TripGroup tripGroup = tripGroupService.findById(id);
+        User user = userService.findUserByEmail(mail);
+        return tripGroup == null || user == null
+                ? new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.NOT_FOUND)
+                : addUserToGroup(user, tripGroup);
+    }
+
+    private ResponseEntity<TripGroup> addUserToGroup(User user, TripGroup tripGroup) {
+        return tripGroup.getUsers().contains(user)
+                ? new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.CONFLICT)
+                : new ResponseEntity<TripGroup>(tripGroup, HttpStatus.OK);
+    }
+
 
     /*
-    *       |
-    *       |   Funkcje nie zdefiniowane w dokumentacji. Użycie na własną odpowiedzialność :)
-    *       V
-    * */
+     *       |
+     *       |   Funkcje nie zdefiniowane w dokumentacji. Użycie na własną odpowiedzialność :)
+     *       V
+     * */
 
-    @GetMapping("r_user/tripGroup/{name}/addUser/{mail}")
-    public ResponseEntity<TripGroup> addUserToTripGroup(@PathVariable("name") String name, @PathVariable("mail") String mail) {
-        TripGroup tripGroup = tripGroupService.findByName(name);
-        User user = userService.findUserByEmail(mail);
-        if (tripGroup == null || user == null)
-            return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.NOT_FOUND);
-        else {
-            if (tripGroup.getUsers().contains(user))
-                return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.CONFLICT);
-            else {
-                tripGroup.addUser(user);
-                return new ResponseEntity<TripGroup>(tripGroup, HttpStatus.OK);
-            }
-        }
-    }
 
     @GetMapping("r_user/tripGroup/{name}/owner")
     public ResponseEntity<String> getOwnerName(@PathVariable("name") String name) {
@@ -149,10 +167,26 @@ public class TripGroupController {
     }
 
 
+
+
     //Pomocniczne metody
+
+
+    //TODO zdefiniować w jakiejś klasie Utilsów
+    public String convertToJson(Object object) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = null;
+        try {
+            json = objectMapper.writeValueAsString(object);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
     public boolean isCurrentUserMember(TripGroup tripGroup) {
         User currentUser = userService.getCurrentUser();
-        boolean condition = tripGroup.getOwnerMail().equals(currentUser.getEmail());
+        boolean condition = tripGroup.getOwner().equals(currentUser.getEmail());
         return condition ? true : false;
     }
 }

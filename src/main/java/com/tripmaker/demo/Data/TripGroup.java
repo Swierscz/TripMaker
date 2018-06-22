@@ -1,5 +1,12 @@
 package com.tripmaker.demo.Data;
 
+
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -25,13 +32,17 @@ public class TripGroup implements Serializable {
 
     private Long dateTo;
 
+    @JsonIgnore
+    @ManyToOne
     @NotNull
-    private String ownerMail;
+    private User owner;
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Place> places;
 
     @ManyToMany(mappedBy = "tripGroups")
+    @JsonIgnore
+    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@trip_generator_id")
     private Set<User> users;
 
     public Long getId() {
@@ -100,15 +111,17 @@ public class TripGroup implements Serializable {
         users.add(user);
     }
 
-    public String getOwnerMail() {
-        return ownerMail;
+    public User getOwner() {
+        return owner;
     }
 
-    public void setOwnerMail(String ownerMail) {
-        this.ownerMail = ownerMail;
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public String toString(){
         return id + " " + name + " " + description + " " + dateFrom + " " + dateTo;
     }
+
+
 }

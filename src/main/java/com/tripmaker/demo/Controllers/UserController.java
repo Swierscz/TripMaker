@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.jws.soap.SOAPBinding;
+import java.security.acl.Owner;
+import java.util.HashSet;
 import java.util.Set;
 
 @RestController
@@ -35,7 +37,18 @@ public class UserController {
 
     @GetMapping("r_user/user/getCurrentUserOwnedGroups")
     public ResponseEntity<Set<TripGroup>> getCurrentUserOwnedGroups(){
-        return new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_IMPLEMENTED);
+        User currentUser = userService.getCurrentUser();
+        Set<TripGroup> allUserGroups = currentUser.getTripGroups();
+        Set<TripGroup> ownedGroups = new HashSet<TripGroup>();
+        if(allUserGroups == null || allUserGroups.isEmpty()) return new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND);
+
+        for(TripGroup tripGroup : allUserGroups ){
+             if(tripGroup.getOwner() == currentUser) ownedGroups.add(tripGroup);
+        }
+
+        return ownedGroups.isEmpty()
+                ? new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND)
+                : new ResponseEntity<Set<TripGroup>>(ownedGroups, HttpStatus.OK);
     }
 
 

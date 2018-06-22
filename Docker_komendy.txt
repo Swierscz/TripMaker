@@ -3,3 +3,4 @@ docker build . -t tripmaker
 docker inspect msql
 docker run -p 8086:8086 --name tripmaker --link msql:mysql -d tripmaker
 docker run --name msql -e MYSQL_ROOT_PASSWORD=20segamirekcod18 -e MYSQL_PASSWORD=20segamirekcod18 -e MYSQL_USER=user -e MYSQL_DATABASE=springdb -d mysql:latest
+docker exec -it msql bash -l
