@@ -20,12 +20,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public void deletePlace(String name) {
-        placeRepository.delete(findPlaceByName(name));
-    }
-
-    @Override
-    public Place findPlaceByName(String name) {
-        return placeRepository.findByName(name);
+    public Place getPlaceById(Long id) {
+        return placeRepository.findById(id).get();
     }
 }

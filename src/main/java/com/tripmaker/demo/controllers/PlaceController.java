@@ -14,22 +14,24 @@ public class PlaceController {
     @Autowired
     PlaceService placeService;
 
+//   @PostMapping("createPlace")
+//   public ResponseEntity<Place> createPlace(@RequestBody Place place){
+//       placeService.savePlace(place);
+//       return new ResponseEntity<Place>(place, HttpStatus.CREATED);
+//    }
 
-   @PostMapping("createPlace")
-   public ResponseEntity<Place> createPlace(@RequestBody Place place){
-        placeService.savePlace(place);
-       return new ResponseEntity<Place>(place, HttpStatus.CREATED);
-    }
-
-    @PostMapping("deletePlace")
-    public ResponseEntity deletePlace(@RequestBody String name){
-       placeService.deletePlace(name);
+    @GetMapping("deletePlace/{id}")
+    public ResponseEntity deletePlace(@PathVariable("id") Long id){
+       placeService.deletePlace(id);
        return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("findPlace")
-    public ResponseEntity<Place> findPlace(@RequestHeader(value = "name") String name){
-       return new ResponseEntity<Place>(placeService.findPlaceByName(name), HttpStatus.OK);
+    @GetMapping("getPlace/{id}")
+    public ResponseEntity<Place> getPlace(@PathVariable("id") Long id){
+       Place place = placeService.getPlaceById(id);
+       return place == null
+               ? new ResponseEntity<Place>( (Place) null, HttpStatus.NOT_FOUND)
+               : new ResponseEntity<Place>( place, HttpStatus.OK);
     }
 
 }

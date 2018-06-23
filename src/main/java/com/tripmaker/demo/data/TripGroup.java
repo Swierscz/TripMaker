@@ -36,7 +36,7 @@ public class TripGroup implements Serializable {
     @NotNull
     private User owner;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Place> places;
 
     @ManyToMany
