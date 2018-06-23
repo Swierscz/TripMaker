@@ -14,17 +14,13 @@ public class PlaceController {
     @Autowired
     PlaceService placeService;
 
+    //Temporary disabled
+
 //   @PostMapping("createPlace")
 //   public ResponseEntity<Place> createPlace(@RequestBody Place place){
 //       placeService.savePlace(place);
 //       return new ResponseEntity<Place>(place, HttpStatus.CREATED);
 //    }
-
-    @GetMapping("deletePlace/{id}")
-    public ResponseEntity deletePlace(@PathVariable("id") Long id){
-       placeService.deletePlace(id);
-       return new ResponseEntity(HttpStatus.OK);
-    }
 
     @GetMapping("getPlace/{id}")
     public ResponseEntity<Place> getPlace(@PathVariable("id") Long id){
