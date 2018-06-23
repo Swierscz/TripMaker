@@ -34,14 +34,15 @@ public class UserController {
 
 
     @GetMapping("r_user/user/getCurrentUserOwnedGroups")
-    public ResponseEntity<Set<TripGroup>> getCurrentUserOwnedGroups(){
+    public ResponseEntity<Set<TripGroup>> getCurrentUserOwnedGroups() {
         User currentUser = userService.getCurrentUser();
         Set<TripGroup> allUserGroups = currentUser.getTripGroups();
         Set<TripGroup> ownedGroups = new HashSet<TripGroup>();
-        if(allUserGroups == null || allUserGroups.isEmpty()) return new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND);
+        if (allUserGroups == null || allUserGroups.isEmpty())
+            return new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND);
 
-        for(TripGroup tripGroup : allUserGroups ){
-             if(tripGroup.getOwner() == currentUser) ownedGroups.add(tripGroup);
+        for (TripGroup tripGroup : allUserGroups) {
+            if (tripGroup.getOwner() == currentUser) ownedGroups.add(tripGroup);
         }
 
         return ownedGroups.isEmpty()
@@ -52,47 +53,27 @@ public class UserController {
 
     @GetMapping("r_admin/user/getUserByMail/{mail}")
     public ResponseEntity<User> findUserByEmail(@PathVariable("mail") String mail) {
-        User user = userService.findUserByEmail(mail);
-        return user == null
-                ? new ResponseEntity<User>((User) null, HttpStatus.NOT_FOUND)
-                : new ResponseEntity<User>(user, HttpStatus.OK);
+        return new ResponseEntity<User>(userService.findUserByEmail(mail), HttpStatus.OK);
     }
 
 
     @GetMapping("r_admin/user/getUserByUsername/{username}")
     public ResponseEntity<User> findUserByUserName(@PathVariable("username") String username) {
-        User user = userService.findUserByUserName(username);
-
-        return user == null
-                ? new ResponseEntity<User>((User) null, HttpStatus.NOT_FOUND)
-                : new ResponseEntity<User>(user, HttpStatus.OK);
+        return new ResponseEntity<User>(userService.findUserByUserName(username), HttpStatus.OK);
     }
 
     @GetMapping("r_admin/user/getUserTripGroupsByMail/{mail}")
     public ResponseEntity<Set<TripGroup>> getUserTripGroupsByMail(@PathVariable("mail") String mail) {
         User user = userService.findUserByEmail(mail);
 
-        if(user == null) return new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND);
-        else
-            return user.getTripGroups() == null
-                    ? new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND)
-                    : new ResponseEntity<Set<TripGroup>>( user.getTripGroups(), HttpStatus.OK);
+        return user.getTripGroups() == null
+                ? new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND)
+                : new ResponseEntity<Set<TripGroup>>(user.getTripGroups(), HttpStatus.OK);
     }
 
     @GetMapping("r_user/user/getCurrentUser")
     public ResponseEntity<User> getCurrentUser() {
         return new ResponseEntity<User>(userService.getCurrentUser(), HttpStatus.OK);
-    }
-
-
-    @GetMapping("r_user/user/testUser")
-    public ResponseEntity<String> test(){
-        return new ResponseEntity<String>("Dostęp zwykłego usera", HttpStatus.OK);
-    }
-
-    @GetMapping("r_admin/user/testUser")
-    public ResponseEntity<String> testAdmin(){
-        return new ResponseEntity<String>("Dostęp admina", HttpStatus.OK);
     }
 
     /*

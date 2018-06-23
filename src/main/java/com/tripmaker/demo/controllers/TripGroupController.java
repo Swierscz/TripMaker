@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.swing.table.TableRowSorter;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import static com.tripmaker.demo.utils.JsonUtils.convertToJson;
@@ -46,12 +47,7 @@ public class TripGroupController {
     @GetMapping("r_user/tripGroup/getTripGroupById/{id}")
     public ResponseEntity<String> getTripGroup(@PathVariable("id") Long id) {
         TripGroup tripGroup = tripGroupService.findById(id);
-
-        //TODO Sprawdzić inne przypadki braku danej wartości w bazie. Być może nie trzeba opakowywać pobierania z bazy checkNullem
-        if (tripGroup == null) return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
-
         tripGroup.setOwner(tripGroup.getOwner());
-
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Content-Type", "application/json;charset=UTF-8");
         return new ResponseEntity<String>(convertToJson(tripGroup), httpHeaders, HttpStatus.OK);
@@ -60,12 +56,7 @@ public class TripGroupController {
 
     @GetMapping("r_user/tripGroup/getTripGroupById_woOwner/{id}")
     public ResponseEntity<TripGroup> findTripGroupById(@PathVariable("id") Long id) {
-        TripGroup tripGroup = tripGroupService.findById(id);
-        ResponseEntity<TripGroup> response =
-                tripGroup == null
-                        ? new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.NOT_FOUND)
-                        : new ResponseEntity<TripGroup>(tripGroup, HttpStatus.OK);
-        return response;
+        return new ResponseEntity<TripGroup>(tripGroupService.findById(id), HttpStatus.OK);
     }
 
     @GetMapping("r_user/tripGroup/deleteTripGroup/{id}")
@@ -80,7 +71,6 @@ public class TripGroupController {
 
     public ResponseEntity deleteTripGroup(Long id, String role) {
         TripGroup tripGroup = tripGroupService.findById(id);
-        if (tripGroup == null) return new ResponseEntity(HttpStatus.NOT_FOUND);
 
         if (!role.equals(Role.ADMIN)) {
             if (!(userService.getCurrentUser() == tripGroup.getOwner()))
@@ -94,10 +84,7 @@ public class TripGroupController {
 
     @GetMapping("r_user/tripGroup/findGroupsByName/{name}")
     public ResponseEntity<Set<TripGroup>> findTripGroupsByName(@PathVariable("name") String name) {
-        Set<TripGroup> listOfFoundGroups = tripGroupService.findGroupsByName(name);
-        return listOfFoundGroups == null
-                ? new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND)
-                : new ResponseEntity<Set<TripGroup>>(listOfFoundGroups, HttpStatus.OK);
+        return new ResponseEntity<Set<TripGroup>>(tripGroupService.findGroupsByName(name), HttpStatus.OK);
     }
 
 
@@ -123,7 +110,6 @@ public class TripGroupController {
 
     public ResponseEntity<TripGroup> addPlaceToGroup(Long id, Place place, String role) {
         TripGroup tripGroup = tripGroupService.findById(id);
-        if (tripGroup == null) return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.NOT_FOUND);
 
         return (!isAuthorizedToUpdateGroup(role, tripGroup))
                 ? new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.UNAUTHORIZED)
@@ -131,9 +117,11 @@ public class TripGroupController {
     }
 
     public ResponseEntity<TripGroup> checkIsPlaceAlreadyCreatedIfNotCreate(Place place, TripGroup tripGroup) {
-        for (Place placeOnList : tripGroup.getPlaces()) {
-            if (placeOnList.getName().equals(place.getName()))
-                return new ResponseEntity<TripGroup>(HttpStatus.CONFLICT);
+        if (tripGroup.getPlaces() != null) {
+            for (Place placeOnList : tripGroup.getPlaces()) {
+                if (placeOnList.getName().equals(place.getName()))
+                    return new ResponseEntity<TripGroup>(HttpStatus.CONFLICT);
+            }
         }
         tripGroup.addPlaces(place);
         tripGroupService.saveGroup(tripGroup);
@@ -153,7 +141,6 @@ public class TripGroupController {
 
     public ResponseEntity deletePlaceFromGroup(Long id, String name, String role) {
         TripGroup tripGroup = tripGroupService.findById(id);
-        if (tripGroup == null) return new ResponseEntity<TripGroup>(HttpStatus.NOT_FOUND);
         if (!isAuthorizedToUpdateGroup(role, tripGroup)) return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 
         Place placeToDelete = null;

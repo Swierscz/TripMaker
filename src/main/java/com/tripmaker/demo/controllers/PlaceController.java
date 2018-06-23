@@ -24,10 +24,7 @@ public class PlaceController {
 
     @GetMapping("getPlace/{id}")
     public ResponseEntity<Place> getPlace(@PathVariable("id") Long id){
-       Place place = placeService.getPlaceById(id);
-       return place == null
-               ? new ResponseEntity<Place>( (Place) null, HttpStatus.NOT_FOUND)
-               : new ResponseEntity<Place>( place, HttpStatus.OK);
+       return new ResponseEntity<Place>( placeService.getPlaceById(id), HttpStatus.OK);
     }
 
 }
