@@ -1,8 +1,6 @@
 package com.tripmaker.demo.data;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -27,6 +25,7 @@ public class User implements Serializable{
     @Length(min = 5, message = "Your password must have at least 5 characters")
     @NotEmpty(message = "Please provide your password")
     @Column(name = "password")
+    @JsonIgnore
     private String password;
 
     @NotEmpty(message = "Please provide your username")
@@ -46,7 +45,7 @@ public class User implements Serializable{
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "users")
     @JsonIgnore
-    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@user_generator_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@user_id")
     private Set<TripGroup> tripGroups;
 
     public Long getId() {

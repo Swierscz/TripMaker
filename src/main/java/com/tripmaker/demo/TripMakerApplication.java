@@ -1,5 +1,7 @@
 package com.tripmaker.demo;
 
+//TODO Sprawdzić czy rola jest CaseSensitive
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

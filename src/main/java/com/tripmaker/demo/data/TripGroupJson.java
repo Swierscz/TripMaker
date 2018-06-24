@@ -1,26 +1,14 @@
 package com.tripmaker.demo.data;
 
 
-
-import com.fasterxml.jackson.annotation.*;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "trip_group")
-public class TripGroup implements Serializable {
+public class TripGroupJson implements Serializable {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "trip_group_id")
     private Long id;
 
-    @NotEmpty(message = "Please provide trip group name")
     private String name;
 
     private String description;
@@ -29,18 +17,10 @@ public class TripGroup implements Serializable {
 
     private Long dateTo;
 
-    @ManyToOne
-    @JsonIgnore
-    @NotNull
     private User owner;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Place> places;
 
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(name = "trip_group_user", joinColumns = @JoinColumn(name = "trip_group_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@trip_group_id")
     private Set<User> users;
 
     public Long getId() {
