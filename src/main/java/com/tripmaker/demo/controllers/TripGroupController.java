@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.swing.table.TableRowSorter;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -198,6 +200,11 @@ public class TripGroupController {
         return new ResponseEntity<Boolean>(false, HttpStatus.OK);
     }
 
+    @GetMapping("r_user/tripGroup/getAll")
+    public ResponseEntity<Set<TripGroup>> getAllGroups() {
+        List<TripGroup> groupList = tripGroupService.findAllGroups();
+        return new ResponseEntity<Set<TripGroup>>(new HashSet<>(groupList), HttpStatus.OK);
+    }
 
     //endregion
 
@@ -218,12 +225,7 @@ public class TripGroupController {
 //        }
 //    }
 //
-//    @GetMapping("r_user/tripGroup/getAll")
-//    public ResponseEntity<List<TripGroup>> getAllGroups() {
-//        List<TripGroup> groupList = tripGroupService.findAllGroups();
-//        if (groupList == null) return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.NOT_FOUND);
-//        else return new ResponseEntity<List<TripGroup>>(groupList, HttpStatus.OK);
-//    }
+
 
 
     //Pomocniczne metody
