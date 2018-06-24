@@ -37,6 +37,8 @@ public class User implements Serializable{
     @Column(name = "last_name")
     private String lastName;
 
+    private boolean sex;
+
     @ManyToOne(cascade = CascadeType.ALL)
     private Locale locale;
 
@@ -119,5 +121,13 @@ public class User implements Serializable{
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public boolean isSex() {
+        return sex;
+    }
+
+    public void setSex(boolean sex) {
+        this.sex = sex;
     }
 }
