@@ -49,6 +49,13 @@ public class TripGroupController {
     public ResponseEntity<String> getTripGroup(@PathVariable("id") Long id) {
         TripGroup tripGroup = tripGroupService.findById(id);
         tripGroup.getOwner().setTripGroups(null);
+        tripGroup.getOwner().setPassword(null);
+        //TODO sprawdzić czy czasem wartości się nie zerują
+        if(tripGroup.getUsers() != null)
+        for(User user : tripGroup.getUsers()){
+            user.setPassword(null);
+            user.setTripGroups(null);
+        }
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Content-Type", "application/json;charset=UTF-8");
         return new ResponseEntity<String>(convertToJson(tripGroup), httpHeaders, HttpStatus.OK);
@@ -240,7 +247,9 @@ public class TripGroupController {
 
     public boolean isCurrentUserMember(TripGroup tripGroup) {
         User currentUser = userService.getCurrentUser();
-        boolean condition = tripGroup.getOwner().equals(currentUser.getEmail());
-        return condition ? true : false;
+        for(User user : tripGroup.getUsers()){
+            if(user.getEmail().equals(currentUser.getEmail())) return true;
+        }
+        return false;
     }
 }

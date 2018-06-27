@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -74,6 +75,19 @@ public class UserController {
     @GetMapping("r_user/user/getCurrentUser")
     public ResponseEntity<User> getCurrentUser() {
         return new ResponseEntity<User>(userService.getCurrentUser(), HttpStatus.OK);
+    }
+
+    //TODO Przerobić na refleksję
+    @PostMapping("r_user/user/updateCurrentUser")
+    public ResponseEntity<User> updateCurrentUser(@RequestBody User newUser){
+        User user = userService.getCurrentUser();
+        if(newUser.getEmail() != null) user.setEmail(newUser.getEmail());
+        if(newUser.getUserName() !=null) user.setUserName(newUser.getUserName());
+        if(newUser.getName() != null) user.setName(newUser.getName());
+        if(newUser.getLastName() != null) user.setLastName(newUser.getLastName());
+        if(newUser.getLocale() != null) user.setLocale(newUser.getLocale());
+        userService.saveUser(user);
+        return new ResponseEntity<User>(user,HttpStatus.OK);
     }
 
     /*
