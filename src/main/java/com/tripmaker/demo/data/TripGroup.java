@@ -30,7 +30,7 @@ public class TripGroup implements Serializable {
     private Long dateTo;
 
     @ManyToOne
-    @JsonIgnore
+//    @JsonIgnore
     @NotNull
     private User owner;
 
@@ -38,7 +38,7 @@ public class TripGroup implements Serializable {
     private Set<Place> places;
 
     @ManyToMany
-    @JsonIgnore
+//    @JsonIgnore
     @JoinTable(name = "trip_group_user", joinColumns = @JoinColumn(name = "trip_group_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@trip_group_id")
     private Set<User> users;

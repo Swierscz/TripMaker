@@ -46,7 +46,7 @@ public class User implements Serializable{
     private String role;
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "users")
-//    @JsonIgnore
+    @JsonIgnore
     @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@user_id")
     private Set<TripGroup> tripGroups;
 
