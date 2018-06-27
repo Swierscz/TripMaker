@@ -1,10 +1,12 @@
-package com.tripmaker.demo.data;
+package com.tripmaker.demo.controllers;
 
+
+import com.tripmaker.demo.data.TripGroup;
 
 import java.util.Set;
 
 //TODO Zmienić nazwę tej klasy
-public class TripGroupLimiter {
+public class TripGroupRequestCutter {
 
     public static Set<TripGroup> limitSetOfGroupsForSearchRequest(Set<TripGroup> tripGroupSet){
         for(TripGroup tripGroup : tripGroupSet){

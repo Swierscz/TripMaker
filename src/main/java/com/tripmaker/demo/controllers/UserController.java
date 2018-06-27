@@ -1,8 +1,6 @@
 package com.tripmaker.demo.controllers;
 
-import com.tripmaker.demo.config.AuthenticationFacade;
 import com.tripmaker.demo.data.TripGroup;
-import com.tripmaker.demo.data.TripGroupLimiter;
 import com.tripmaker.demo.data.User;
 import com.tripmaker.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,12 +16,12 @@ import java.util.Set;
 public class UserController {
 
     @Autowired
-    AuthenticationFacade authenticationFacade;
+    RequestAuthorization rAuth;
 
     @Autowired
     UserService userService;
 
-    @GetMapping("r_user/user/getCurrentUserGroups")
+    @GetMapping("user/getCurrentUserGroups")
     public ResponseEntity<Set<TripGroup>> getCurrentUserGroups() {
         User currentUser = userService.getCurrentUser();
         Set<TripGroup> setOfTripGroups = currentUser.getTripGroups();
@@ -35,7 +32,7 @@ public class UserController {
     }
 
 
-    @GetMapping("r_user/user/getCurrentUserOwnedGroups")
+    @GetMapping("user/getCurrentUserOwnedGroups")
     public ResponseEntity<Set<TripGroup>> getCurrentUserOwnedGroups() {
         User currentUser = userService.getCurrentUser();
         Set<TripGroup> allUserGroups = currentUser.getTripGroups();
@@ -52,8 +49,9 @@ public class UserController {
                 : new ResponseEntity<Set<TripGroup>>(ownedGroups, HttpStatus.OK);
     }
 
-    @GetMapping("r_admin/user/getUserTripGroupsByMail/{mail}")
+    @GetMapping("user/getUserTripGroupsByMail/{mail}")
     public ResponseEntity<Set<TripGroup>> getUserTripGroupsByMail(@PathVariable("mail") String mail) {
+        if(!rAuth.isCurrentUserAdmin()) return new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.UNAUTHORIZED);
         User user = userService.findUserByEmail(mail);
         Set<TripGroup> tripGroupSet = user.getTripGroups();
 
@@ -63,24 +61,28 @@ public class UserController {
     }
 
 
-    @GetMapping("r_admin/user/getUserByMail/{mail}")
+    @GetMapping("user/getUserByMail/{mail}")
     public ResponseEntity<User> findUserByEmail(@PathVariable("mail") String mail) {
-        return new ResponseEntity<User>(userService.findUserByEmail(mail), HttpStatus.OK);
+        return !rAuth.isCurrentUserAdmin()
+                ? new ResponseEntity<User>((User) null, HttpStatus.UNAUTHORIZED)
+                : new ResponseEntity<User>(userService.findUserByEmail(mail), HttpStatus.OK);
     }
 
 
-    @GetMapping("r_admin/user/getUserByUsername/{username}")
+    @GetMapping("user/getUserByUsername/{username}")
     public ResponseEntity<User> findUserByUserName(@PathVariable("username") String username) {
-        return new ResponseEntity<User>(userService.findUserByUserName(username), HttpStatus.OK);
+        return !rAuth.isCurrentUserAdmin()
+                ? new ResponseEntity<User>((User) null, HttpStatus.UNAUTHORIZED)
+                : new ResponseEntity<User>(userService.findUserByUserName(username), HttpStatus.OK);
     }
 
-    @GetMapping("r_user/user/getCurrentUser")
+    @GetMapping("user/getCurrentUser")
     public ResponseEntity<User> getCurrentUser() {
         return new ResponseEntity<User>(userService.getCurrentUser(), HttpStatus.OK);
     }
 
     //TODO Przerobić na refleksję
-    @PostMapping("r_user/user/updateCurrentUser")
+    @PostMapping("user/updateCurrentUser")
     public ResponseEntity<User> updateCurrentUser(@RequestBody User newUser){
         User user = userService.getCurrentUser();
         if(newUser.getEmail() != null) user.setEmail(newUser.getEmail());

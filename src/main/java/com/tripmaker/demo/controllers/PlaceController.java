@@ -14,17 +14,14 @@ public class PlaceController {
     @Autowired
     PlaceService placeService;
 
-    //Temporary disabled
-
-//   @PostMapping("createPlace")
-//   public ResponseEntity<Place> createPlace(@RequestBody Place place){
-//       placeService.savePlace(place);
-//       return new ResponseEntity<Place>(place, HttpStatus.CREATED);
-//    }
+    @Autowired
+    RequestAuthorization rAuth;
 
     @GetMapping("getPlace/{id}")
     public ResponseEntity<Place> getPlace(@PathVariable("id") Long id){
-       return new ResponseEntity<Place>( placeService.getPlaceById(id), HttpStatus.OK);
+       return !rAuth.isCurrentUserAdmin()
+               ? new ResponseEntity<Place>((Place) null, HttpStatus.UNAUTHORIZED)
+               : new ResponseEntity<Place>( placeService.getPlaceById(id), HttpStatus.OK);
     }
 
 }
