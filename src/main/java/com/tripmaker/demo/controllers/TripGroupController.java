@@ -43,7 +43,7 @@ public class TripGroupController {
     @GetMapping("tripGroup/getTripGroupById/{id}")
     public ResponseEntity<TripGroup> getTripGroupById(@PathVariable("id") Long id) {
         TripGroup tripGroup = tripGroupService.findById(id);
-        if(!(rAuth.isCurrentUserAdmin() || rAuth.isCurrentUserMember(tripGroup))){
+        if (!(rAuth.isCurrentUserAdmin() || rAuth.isCurrentUserMember(tripGroup))) {
             tripGroup = TripGroupRequestCutter.limitTripGroupForAimedRequest(tripGroup);
         }
         return new ResponseEntity<TripGroup>(tripGroup, HttpStatus.OK);
@@ -53,11 +53,12 @@ public class TripGroupController {
     @GetMapping("tripGroup/deleteTripGroup/{id}")
     public ResponseEntity deleteTripGroup(@PathVariable("id") Long id) {
         TripGroup tripGroup = tripGroupService.findById(id);
-        if(!(rAuth.isCurrentUserAdmin() || rAuth.isCurrentUserOwner(tripGroup))){
+        if (!(rAuth.isCurrentUserAdmin() || rAuth.isCurrentUserOwner(tripGroup))) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        } else {
+            tripGroupService.deleteGroup(tripGroup.getId());
+            return new ResponseEntity(HttpStatus.OK);
         }
-        tripGroupService.deleteGroup(tripGroup.getId());
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("tripGroup/findGroupsByName/{name}")
@@ -73,7 +74,7 @@ public class TripGroupController {
 
         //TODO Zaimplementowac
 
-        return new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
     }
     //endregion
 
@@ -83,39 +84,32 @@ public class TripGroupController {
         TripGroup tripGroup = tripGroupService.findById(id);
         return (!(rAuth.isCurrentUserAdmin() || rAuth.isCurrentUserMember(tripGroup)))
                 ? new ResponseEntity(null, HttpStatus.UNAUTHORIZED)
-                : checkIsPlaceAlreadyCreatedIfNotCreate(place, tripGroup);
+                : createPlaceIfNotCreatedAlready(place, tripGroup);
     }
 
-    public ResponseEntity checkIsPlaceAlreadyCreatedIfNotCreate(Place place, TripGroup tripGroup) {
-        if (tripGroup.getPlaces() != null) {
-            for (Place placeOnList : tripGroup.getPlaces()) {
-                if (placeOnList.getName().equals(place.getName()))
-                    return new ResponseEntity<TripGroup>(HttpStatus.CONFLICT);
-            }
+    public ResponseEntity createPlaceIfNotCreatedAlready(Place place, TripGroup tripGroup) {
+        if (tripGroup.getPlaces().stream()
+                .anyMatch(placeOnList -> placeOnList.getName()
+                        .equals(place.getName()))) {
+            return new ResponseEntity<TripGroup>(HttpStatus.CONFLICT);
+        } else {
+            tripGroup.addPlaces(place);
+            tripGroupService.saveGroup(tripGroup);
+            return new ResponseEntity(HttpStatus.OK);
         }
-        tripGroup.addPlaces(place);
-        tripGroupService.saveGroup(tripGroup);
-        return new ResponseEntity(HttpStatus.OK);
     }
 
 
     @GetMapping("tripGroup/{id}/deletePlace/{name}")
     public ResponseEntity deletePlaceFromTripGroupByName(@PathVariable("id") Long id, @PathVariable("name") String name) {
         TripGroup tripGroup = tripGroupService.findById(id);
-        if(!(rAuth.isCurrentUserAdmin() || rAuth.isCurrentUserMember(tripGroup))) {
+        if (!(rAuth.isCurrentUserAdmin() || rAuth.isCurrentUserMember(tripGroup))) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        } else {
+            tripGroup.getPlaces().removeIf(place -> place.getName().equals(name));
+            tripGroupService.saveGroup(tripGroup);
+            return new ResponseEntity(HttpStatus.OK);
         }
-        Place placeToDelete = null;
-        if (tripGroup.getPlaces() != null) {
-            for (Place place : tripGroup.getPlaces()) {
-                if (place.getName().equals(name)) {
-                    placeToDelete = place;
-                }
-            }
-            tripGroup.getPlaces().remove(placeToDelete);
-        }
-        tripGroupService.saveGroup(tripGroup);
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     //endregion
@@ -124,16 +118,18 @@ public class TripGroupController {
     //region USER
     @GetMapping("tripGroup/{id}/addUser/{mail}")
     public ResponseEntity<TripGroup> addUserToTripGroup(@PathVariable("id") Long id, @PathVariable("mail") String mail) {
-        if(!rAuth.isCurrentUserAdmin()) return new ResponseEntity<TripGroup>((TripGroup) null,HttpStatus.UNAUTHORIZED);
-        TripGroup tripGroup = tripGroupService.findById(id);
-        User user = userService.findUserByEmail(mail);
-        return tripGroup.getUsers().contains(user)
-                ? new ResponseEntity<TripGroup>((TripGroup) null, HttpStatus.CONFLICT)
-                : new ResponseEntity<TripGroup>(tripGroup, HttpStatus.OK);
+        if (!rAuth.isCurrentUserAdmin()) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        } else {
+            TripGroup tripGroup = tripGroupService.findById(id);
+            User user = userService.findUserByEmail(mail);
+            tripGroup.getUsers().add(user);
+            return new ResponseEntity<TripGroup>(tripGroup, HttpStatus.OK);
+        }
     }
 
     @GetMapping("tripGroup/{id}/join")
-    public ResponseEntity joinGroup(@PathVariable("id") Long id){
+    public ResponseEntity joinGroup(@PathVariable("id") Long id) {
         TripGroup tripGroup = tripGroupService.findById(id);
         tripGroup.getUsers().add(userService.getCurrentUser());
         tripGroupService.saveGroup(tripGroup);
@@ -141,7 +137,7 @@ public class TripGroupController {
     }
 
     @GetMapping("tripGroup/{id}/quit")
-    public ResponseEntity quitGroup(@PathVariable("id") Long id){
+    public ResponseEntity quitGroup(@PathVariable("id") Long id) {
         TripGroup tripGroup = tripGroupService.findById(id);
         tripGroup.getUsers().remove(userService.getCurrentUser());
         tripGroupService.saveGroup(tripGroup);
@@ -149,12 +145,11 @@ public class TripGroupController {
     }
 
     @GetMapping("tripGroup/{id}/isMember")
-    public ResponseEntity<Boolean> isCurrentUserMember(@PathVariable("id") Long id){
-        TripGroup tripGroup = tripGroupService.findById(id);
-        for(User user : tripGroup.getUsers()){
-            if(user == userService.getCurrentUser()) return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-        }
-        return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+    public ResponseEntity<Boolean> isCurrentUserMember(@PathVariable("id") Long id) {
+        return tripGroupService.findById(id).getUsers().stream()
+                .anyMatch(user -> user == userService.getCurrentUser())
+                ? new ResponseEntity<Boolean>(true, HttpStatus.OK)
+                : new ResponseEntity<Boolean>(false, HttpStatus.OK);
     }
 
     @GetMapping("tripGroup/getAll")

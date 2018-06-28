@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api")
@@ -28,7 +29,7 @@ public class UserController {
         Set<TripGroup> setOfTripGroups = currentUser.getTripGroups();
 
         return setOfTripGroups == null
-                ? new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND)
+                ? new ResponseEntity(HttpStatus.NOT_FOUND)
                 : new ResponseEntity<Set<TripGroup>>(setOfTripGroups, HttpStatus.OK);
     }
 
@@ -36,16 +37,16 @@ public class UserController {
     public ResponseEntity<Set<TripGroup>> getCurrentUserOwnedGroups() {
         User currentUser = userService.getCurrentUser();
         Set<TripGroup> allUserGroups = currentUser.getTripGroups();
-        Set<TripGroup> ownedGroups = new HashSet<TripGroup>();
+
         if (allUserGroups == null || allUserGroups.isEmpty())
             return new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND);
 
-        for (TripGroup tripGroup : allUserGroups) {
-            if (tripGroup.getOwner() == currentUser) ownedGroups.add(tripGroup);
-        }
+        Set<TripGroup> ownedGroups = allUserGroups.stream()
+                .filter(tripGroup -> tripGroup.getOwner() == currentUser )
+                .collect(Collectors.toSet());
 
         return ownedGroups.isEmpty()
-                ? new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND)
+                ? new ResponseEntity(HttpStatus.NOT_FOUND)
                 : new ResponseEntity<Set<TripGroup>>(ownedGroups, HttpStatus.OK);
     }
 
@@ -56,7 +57,7 @@ public class UserController {
         Set<TripGroup> tripGroupSet = user.getTripGroups();
 
         return tripGroupSet == null
-                ? new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND)
+                ? new ResponseEntity(HttpStatus.NOT_FOUND)
                 : new ResponseEntity<Set<TripGroup>>(user.getTripGroups(), HttpStatus.OK);
     }
 
@@ -64,7 +65,7 @@ public class UserController {
     @GetMapping("user/getUserByMail/{mail}")
     public ResponseEntity<User> findUserByEmail(@PathVariable("mail") String mail) {
         return !rAuth.isCurrentUserAdmin()
-                ? new ResponseEntity<User>((User) null, HttpStatus.UNAUTHORIZED)
+                ? new ResponseEntity(HttpStatus.UNAUTHORIZED)
                 : new ResponseEntity<User>(userService.findUserByEmail(mail), HttpStatus.OK);
     }
 
@@ -72,7 +73,7 @@ public class UserController {
     @GetMapping("user/getUserByUsername/{username}")
     public ResponseEntity<User> findUserByUserName(@PathVariable("username") String username) {
         return !rAuth.isCurrentUserAdmin()
-                ? new ResponseEntity<User>((User) null, HttpStatus.UNAUTHORIZED)
+                ? new ResponseEntity(HttpStatus.UNAUTHORIZED)
                 : new ResponseEntity<User>(userService.findUserByUserName(username), HttpStatus.OK);
     }
 
