@@ -14,7 +14,6 @@ public class TripGroupServiceImpl implements TripGroupService {
     @Autowired
     TripGroupRepository tripGroupRepository;
 
-
     @Override
     public void saveGroup(TripGroup tripGroup) {
         tripGroupRepository.save(tripGroup);
@@ -22,7 +21,6 @@ public class TripGroupServiceImpl implements TripGroupService {
 
     @Override
     public void deleteGroup(Long id) {
-//        tripGroupRepository.findById(id).get
         tripGroupRepository.deleteById(id);
     }
 

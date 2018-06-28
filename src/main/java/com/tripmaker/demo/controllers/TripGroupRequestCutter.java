@@ -5,7 +5,7 @@ import com.tripmaker.demo.data.TripGroup;
 
 import java.util.Set;
 
-//TODO Zmienić nazwę tej klasy
+//Class defined for cutting circular references in tripGroup JSON response
 public class TripGroupRequestCutter {
 
     public static Set<TripGroup> limitSetOfGroupsForSearchRequest(Set<TripGroup> tripGroupSet){

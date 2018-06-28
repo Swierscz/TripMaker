@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,7 +31,6 @@ public class UserController {
                 ? new ResponseEntity<Set<TripGroup>>((Set<TripGroup>) null, HttpStatus.NOT_FOUND)
                 : new ResponseEntity<Set<TripGroup>>(setOfTripGroups, HttpStatus.OK);
     }
-
 
     @GetMapping("user/getCurrentUserOwnedGroups")
     public ResponseEntity<Set<TripGroup>> getCurrentUserOwnedGroups() {
@@ -81,7 +81,6 @@ public class UserController {
         return new ResponseEntity<User>(userService.getCurrentUser(), HttpStatus.OK);
     }
 
-    //TODO Przerobić na refleksję
     @PostMapping("user/updateCurrentUser")
     public ResponseEntity<User> updateCurrentUser(@RequestBody User newUser){
         User user = userService.getCurrentUser();
@@ -93,12 +92,5 @@ public class UserController {
         userService.saveUser(user);
         return new ResponseEntity<User>(user,HttpStatus.OK);
     }
-
-    /*
-     *       |
-     *       |   Funkcje nie zdefiniowane w dokumentacji. Użycie na własną odpowiedzialność :)
-     *       V
-     * */
-
 
 }

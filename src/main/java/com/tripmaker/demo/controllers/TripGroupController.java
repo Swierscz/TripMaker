@@ -165,11 +165,4 @@ public class TripGroupController {
         return new ResponseEntity<Set<TripGroup>>(outputSet, HttpStatus.OK);
     }
 
-
-    //Pomocniczne metody
-
-
-
-
-
 }
